@@ -125,18 +125,12 @@ log('vue 开始初始化...');
      * Make a map and return a function for checking if a key
      * is in that map.
      */
-    function makeMap(
-        str,
-        expectsLowerCase
-    ) {
-        log('enter makeMap');
+    function makeMap(str, expectsLowerCase) {
         var map = Object.create(null);
         var list = str.split(',');
         for (var i = 0; i < list.length; i++) {
             map[list[i]] = true;
         }
-
-        log(map);
 
         return expectsLowerCase
             ? function (val) { return map[val.toLowerCase()]; }
@@ -179,11 +173,10 @@ log('vue 开始初始化...');
      * Create a cached version of a pure function.
      */
     function cached(fn) {
-        log('enter cached(fn)')
+        log('enter cached(fn)');
         var cache = Object.create(null);
         return (function cachedFn(str) {
             var hit = cache[str];
-            log(hit);
             return hit || (cache[str] = fn(str))
         })
     }
@@ -193,24 +186,29 @@ log('vue 开始初始化...');
      */
     var camelizeRE = /-(\w)/g;
 
+    
     var camelize = cached(function (str) {
         return str.replace(camelizeRE, function (_, c) { return c ? c.toUpperCase() : ''; })
     });
+    
 
     /**
      * Capitalize a string.
      */
+    
     var capitalize = cached(function (str) {
         return str.charAt(0).toUpperCase() + str.slice(1)
     });
-
+    
     /**
      * Hyphenate a camelCase string.
      */
     var hyphenateRE = /\B([A-Z])/g;
+    
     var hyphenate = cached(function (str) {
         return str.replace(hyphenateRE, '-$1').toLowerCase()
     });
+    
 
     /**
      * Simple bind polyfill for environments that do not support it,
@@ -239,10 +237,11 @@ log('vue 开始初始化...');
         return fn.bind(ctx)
     }
 
+    
     var bind = Function.prototype.bind
         ? nativeBind
         : polyfillBind;
-
+    
     /**
      * Convert an Array-like object to a real Array.
      */
@@ -260,6 +259,7 @@ log('vue 开始初始化...');
      * Mix properties into target object.
      */
     function extend(to, _from) {
+        log('enter extend(to, _from)');
         for (var key in _from) {
             to[key] = _from[key];
         }
@@ -286,7 +286,9 @@ log('vue 开始初始化...');
      * Stubbing args to make Flow happy without leaving useless transpiled code
      * with ...rest (https://flow.org/blog/2017/05/07/Strict-Function-Call-Arity/).
      */
-    function noop(a, b, c) { }
+    function noop(a, b, c) { 
+        log('enter noop(a, b, c)');
+    }
 
     /**
      * Always return false.
@@ -527,6 +529,7 @@ log('vue 开始初始化...');
      * Parse simple path.
      */
     var bailRE = new RegExp(("[^" + (unicodeRegExp.source) + ".$_\\d]"));
+
     function parsePath(path) {
         if (bailRE.test(path)) {
             return
@@ -561,11 +564,12 @@ log('vue 开始初始化...');
     var isFF = UA && UA.match(/firefox\/(\d+)/);
 
     // Firefox has a "watch" function on Object.prototype...
+    
     var nativeWatch = ({}).watch;
 
     var supportsPassive = false;
+    
     if (inBrowser) {
-        log('if (inBrowser)');
         try {
             var opts = {};
             Object.defineProperty(opts, 'passive', ({
@@ -575,11 +579,10 @@ log('vue 开始初始化...');
                 }
             })); // https://github.com/facebook/flow/issues/285
 
-            log('%c opts', 'color:red;font-size:16px');
-            log(opts);
             window.addEventListener('test-passive', null, opts);
         } catch (e) { }
     }
+
 
     // this needs to be lazy-evaled because vue may be required before
     // vue-server-renderer can set VUE_ENV
@@ -606,12 +609,12 @@ log('vue 开始初始化...');
         return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
     }
 
+
     var hasSymbol =
         typeof Symbol !== 'undefined' && isNative(Symbol) &&
         typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys);
-
-
-
+    
+    
     var _Set;
     /* istanbul ignore if */ // $flow-disable-line
     if (typeof Set !== 'undefined' && isNative(Set)) {
@@ -647,6 +650,7 @@ log('vue 开始初始化...');
 
     {
         var hasConsole = typeof console !== 'undefined';
+
         var classifyRE = /(?:^|[-_])(\w)/g;
         var classify = function (str) {
             return str
@@ -736,6 +740,7 @@ log('vue 开始初始化...');
         };
     }
 
+
     /*  */
 
     var uid = 0;
@@ -781,6 +786,7 @@ log('vue 开始初始化...');
     // This is globally unique because only one watcher
     // can be evaluated at a time.
     Dep.target = null;
+
     var targetStack = [];
 
     function pushTarget(target) {
@@ -887,9 +893,12 @@ log('vue 开始初始化...');
      * not type checking this file because flow doesn't play well with
      * dynamically accessing methods on Array prototype
      */
-
     var arrayProto = Array.prototype;
+
     var arrayMethods = Object.create(arrayProto);
+
+    log(arrayMethods);
+    log(arrayMethods.__proto__);
 
     var methodsToPatch = [
         'push',
@@ -904,9 +913,12 @@ log('vue 开始初始化...');
     /**
      * Intercept mutating methods and emit events
      */
+    log('%c#################', 'color:red;font-size:20px');
     methodsToPatch.forEach(function (method) {
         // cache original method
         var original = arrayProto[method];
+        log(original);
+
         def(arrayMethods, method, function mutator() {
             var args = [], len = arguments.length;
             while (len--) args[len] = arguments[len];
@@ -1968,6 +1980,7 @@ log('vue 开始初始化...');
     // Promise is available, we will use it:
     /* istanbul ignore next, $flow-disable-line */
     if (typeof Promise !== 'undefined' && isNative(Promise)) {
+        log('================if (typeof Promise !== "undefined" && isNative(Promise))');
         var p = Promise.resolve();
         timerFunc = function () {
             p.then(flushCallbacks);
@@ -2074,6 +2087,7 @@ log('vue 开始初始化...');
             'require' // for Webpack/Browserify
         );
 
+        
         var warnNonPresent = function (target, key) {
             warn(
                 "Property or method \"" + key + "\" is not defined on the instance but " +
@@ -2099,6 +2113,7 @@ log('vue 开始初始化...');
             typeof Proxy !== 'undefined' && isNative(Proxy);
 
         if (hasProxy) {
+            log('enter if (hasProxy)');
             var isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta,exact');
             config.keyCodes = new Proxy(config.keyCodes, {
                 set: function set(target, key, value) {
@@ -2969,6 +2984,8 @@ log('vue 开始初始化...');
     /*  */
 
     function installRenderHelpers(target) {
+        log('enter installRenderHelpers');
+        log(FunctionalRenderContext.prototype);
         target._o = markOnce;
         target._n = toNumber;
         target._s = toString;
@@ -3064,7 +3081,9 @@ log('vue 开始初始化...');
         }
     }
 
+    
     installRenderHelpers(FunctionalRenderContext.prototype);
+   
 
     function createFunctionalComponent(
         Ctor,
@@ -3203,6 +3222,7 @@ log('vue 开始初始化...');
     };
 
     var hooksToMerge = Object.keys(componentVNodeHooks);
+   
 
     function createComponent(
         Ctor,
@@ -3548,6 +3568,7 @@ log('vue 开始初始化...');
     var currentRenderingInstance = null;
 
     function renderMixin(Vue) {
+        log('enter renderMixin(Vue)');
         // install runtime convenience helpers
         installRenderHelpers(Vue.prototype);
 
@@ -3832,6 +3853,7 @@ log('vue 开始初始化...');
     }
 
     function eventsMixin(Vue) {
+        log('enter eventsMixin(Vue)');
         var hookRE = /^hook:/;
         Vue.prototype.$on = function (event, fn) {
             var vm = this;
@@ -3964,6 +3986,7 @@ log('vue 开始初始化...');
     }
 
     function lifecycleMixin(Vue) {
+        log('enter lifecycleMixin(Vue)');
         Vue.prototype._update = function (vnode, hydrating) {
             var vm = this;
             var prevEl = vm.$el;
@@ -4298,6 +4321,7 @@ log('vue 开始初始化...');
     // All IE versions use low-res event timestamps, and have problematic clock
     // implementations (#9632)
     if (inBrowser && !isIE) {
+        log('if (inBrowser && !isIE)');
         var performance = window.performance;
         if (
             performance &&
@@ -4934,6 +4958,7 @@ log('vue 开始初始化...');
     }
 
     function stateMixin(Vue) {
+        log('enter stateMixin(Vue)');
         // flow somehow has problems with directly declared definition object
         // when using Object.defineProperty, so we have to procedurally build up
         // the object here.
@@ -4982,6 +5007,7 @@ log('vue 开始初始化...');
                 watcher.teardown();
             }
         };
+        log('exit stateMixin(Vue)');
     }
 
     /*  */
@@ -4989,6 +5015,7 @@ log('vue 开始初始化...');
     var uid$3 = 0;
 
     function initMixin(Vue) {
+        log('enter initMixin(Vue)');
         Vue.prototype._init = function (options) {
             log('enter _init(options)');
             log(this);
@@ -5054,6 +5081,7 @@ log('vue 开始初始化...');
                 vm.$mount(vm.$options.el);
             }
         };
+        log('exit initMixin(Vue)');
     }
 
     function initInternalComponent(vm, options) {
@@ -5129,11 +5157,25 @@ log('vue 开始初始化...');
     }
 
 
+    log('%cbefore initMixin', 'color:red');
     initMixin(Vue);
+    log('%cafter initMixin', 'color:red');
+
+    log('%cbefore stateMixin', 'color:green');
     stateMixin(Vue);
+    log('%cafter stateMixin', 'color:green');
+
+    log('%cbefore eventsMixin', 'color:blue');
     eventsMixin(Vue);
+    log('%cafter eventsMixin', 'color:blue');
+
+    log('%cbefore lifecycleMixin', 'color:orange');
     lifecycleMixin(Vue);
+    log('%cafter lifecycleMixin', 'color:orange');
+
+    log('%cbefore renderMixin', 'color:pink');
     renderMixin(Vue);
+    log('%cafter renderMixin', 'color:pink');
 
     /*  */
 
@@ -5427,6 +5469,7 @@ log('vue 开始初始化...');
     /*  */
 
     function initGlobalAPI(Vue) {
+        log('enter initGlobalAPI(Vue)');
         // config
         var configDef = {};
         configDef.get = function () { return config; };
@@ -5468,7 +5511,12 @@ log('vue 开始初始化...');
         // components with in Weex's multi-instance scenarios.
         Vue.options._base = Vue;
 
+        log('%c_------------------------', 'color:#66CCFF');
         extend(Vue.options.components, builtInComponents);
+        log(Vue.options.components);
+        log('%c_------------------------', 'color:#66CCFF');
+
+
 
         initUse(Vue);
         initMixin$1(Vue);
@@ -5476,7 +5524,9 @@ log('vue 开始初始化...');
         initAssetRegisters(Vue);
     }
 
+    log('%cbefore initGlobalAPI(Vue)', 'color:red');
     initGlobalAPI(Vue);
+    log('%cafter initGlobalAPI(Vue)', 'color:red');
 
     Object.defineProperty(Vue.prototype, '$isServer', {
         get: isServerRendering
@@ -8090,7 +8140,7 @@ log('vue 开始初始化...');
         }, timeout + 1);
         el.addEventListener(event, onEnd);
     }
-
+   
     var transformRE = /\b(transform|all)(,|$)/;
 
     function getTransitionInfo(el, expectedType) {
