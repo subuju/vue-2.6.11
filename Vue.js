@@ -10,7 +10,7 @@ Vue.options = {
         KeepAlive: KeepAlive
     },
     directives: Object.create(null),
-    filter: Object.create(null)
+    filters: Object.create(null)
 }
 
 
@@ -26,3 +26,7 @@ Vue.observable = function (obj) {
 };
 
 
+
+
+
+Vue {_uid: 0, _isVue: true}

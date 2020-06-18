@@ -423,14 +423,14 @@ var methodsToPatch = [
 
 
 var allowedGlobals = function (val) {
-    return map[val]; //map = [Infinity:true, undefined:true, NaN:true, isFinite:true, isNaN：true,
+    return map[val]; //map = {Infinity:true, undefined:true, NaN:true, isFinite:true, isNaN：true,
     //  parseFloat:true, parseInt:true, decodeURI:true, decodeURIComponent:true, encodeURI:true, encodeURIComponent:true, 
-    //  Math:true, Number:true, Date:true, Array：true, Object:true, Boolean:true, String:true, RegExp:true, Map:true, Set:true, JSON:true, Intl:true, require:true]
+    //  Math:true, Number:true, Date:true, Array：true, Object:true, Boolean:true, String:true, RegExp:true, Map:true, Set:true, JSON:true, Intl:true, require:true}
 }
 
 
 
 var isBuiltInModifier = function (val) {
-    return map[val];//map=[stop:true, prevent:true, self:true, ctrl:true, shift:true, alt:true, meta:true, exact:true];
+    return map[val];//map={stop:true, prevent:true, self:true, ctrl:true, shift:true, alt:true, meta:true, exact:true};
 }
 

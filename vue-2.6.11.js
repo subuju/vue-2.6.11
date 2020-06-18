@@ -186,29 +186,29 @@ log('vue 开始初始化...');
      */
     var camelizeRE = /-(\w)/g;
 
-    
+
     var camelize = cached(function (str) {
         return str.replace(camelizeRE, function (_, c) { return c ? c.toUpperCase() : ''; })
     });
-    
+
 
     /**
      * Capitalize a string.
      */
-    
+
     var capitalize = cached(function (str) {
         return str.charAt(0).toUpperCase() + str.slice(1)
     });
-    
+
     /**
      * Hyphenate a camelCase string.
      */
     var hyphenateRE = /\B([A-Z])/g;
-    
+
     var hyphenate = cached(function (str) {
         return str.replace(hyphenateRE, '-$1').toLowerCase()
     });
-    
+
 
     /**
      * Simple bind polyfill for environments that do not support it,
@@ -237,11 +237,11 @@ log('vue 开始初始化...');
         return fn.bind(ctx)
     }
 
-    
+
     var bind = Function.prototype.bind
         ? nativeBind
         : polyfillBind;
-    
+
     /**
      * Convert an Array-like object to a real Array.
      */
@@ -286,7 +286,7 @@ log('vue 开始初始化...');
      * Stubbing args to make Flow happy without leaving useless transpiled code
      * with ...rest (https://flow.org/blog/2017/05/07/Strict-Function-Call-Arity/).
      */
-    function noop(a, b, c) { 
+    function noop(a, b, c) {
         log('enter noop(a, b, c)');
     }
 
@@ -564,11 +564,11 @@ log('vue 开始初始化...');
     var isFF = UA && UA.match(/firefox\/(\d+)/);
 
     // Firefox has a "watch" function on Object.prototype...
-    
+
     var nativeWatch = ({}).watch;
 
     var supportsPassive = false;
-    
+
     if (inBrowser) {
         try {
             var opts = {};
@@ -613,8 +613,8 @@ log('vue 开始初始化...');
     var hasSymbol =
         typeof Symbol !== 'undefined' && isNative(Symbol) &&
         typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys);
-    
-    
+
+
     var _Set;
     /* istanbul ignore if */ // $flow-disable-line
     if (typeof Set !== 'undefined' && isNative(Set)) {
@@ -1447,9 +1447,12 @@ log('vue 开始初始化...');
      * Validate component names
      */
     function checkComponents(options) {
+        log('enter checkComponents(options)');
         for (var key in options.components) {
+            log('for (var key in options.components)');
             validateComponentName(key);
         }
+        log('exit checkComponents(options)');
     }
 
     function validateComponentName(name) {
@@ -1472,8 +1475,15 @@ log('vue 开始初始化...');
      * Object-based format.
      */
     function normalizeProps(options, vm) {
+        log('enter normalizeProps(options, vm)');
+        log(options);
+        log(vm);
+
         var props = options.props;
-        if (!props) { return }
+        if (!props) { 
+            log('if (!props)');
+            return
+        }
         var res = {};
         var i, val, name;
         if (Array.isArray(props)) {
@@ -1503,14 +1513,22 @@ log('vue 开始初始化...');
             );
         }
         options.props = res;
+        log('exit normalizeProps(options, vm)');
     }
 
     /**
      * Normalize all injections into Object-based format
      */
     function normalizeInject(options, vm) {
+        log('enter normalizeInject(options, vm)');
+        log(options);
+        log(vm);
+
         var inject = options.inject;
-        if (!inject) { return }
+        if (!inject) { 
+            log('if (!inject)');
+            return
+        }
         var normalized = options.inject = {};
         if (Array.isArray(inject)) {
             for (var i = 0; i < inject.length; i++) {
@@ -1530,12 +1548,16 @@ log('vue 开始初始化...');
                 vm
             );
         }
+        log('exit normalizeInject(options, vm)');
     }
 
     /**
      * Normalize raw function directives into object format.
      */
     function normalizeDirectives(options) {
+        log('enter normalizeDirectives(options)');
+        log(options);
+
         var dirs = options.directives;
         if (dirs) {
             for (var key in dirs) {
@@ -1545,6 +1567,7 @@ log('vue 开始初始化...');
                 }
             }
         }
+        log('exit normalizeDirectives(options)');
     }
 
     function assertObjectType(name, value, vm) {
@@ -1561,18 +1584,21 @@ log('vue 开始初始化...');
      * Merge two option objects into a new one.
      * Core utility used in both instantiation and inheritance.
      */
-    function mergeOptions(
-        parent,
-        child,
-        vm
-    ) {
+    function mergeOptions(parent, child, vm) {
+        log('enter mergeOptions(parent, child, vm)');
+
+        log(parent);
+        log(child);
+        log(vm);
+
         {
             checkComponents(child);
         }
 
         if (typeof child === 'function') {
+            log("if (typeof child === 'function')")
             child = child.options;
-        }
+        }0
 
         normalizeProps(child, vm);
         normalizeInject(child, vm);
@@ -1583,10 +1609,13 @@ log('vue 开始初始化...');
         // the result of another mergeOptions call.
         // Only merged options has the _base property.
         if (!child._base) {
+            log('if (!child._base)');
             if (child.extends) {
+                log('if (child.extends)');
                 parent = mergeOptions(parent, child.extends, vm);
             }
             if (child.mixins) {
+                log('if (child.mixins)');
                 for (var i = 0, l = child.mixins.length; i < l; i++) {
                     parent = mergeOptions(parent, child.mixins[i], vm);
                 }
@@ -1596,6 +1625,7 @@ log('vue 开始初始化...');
         var options = {};
         var key;
         for (key in parent) {
+            log(key);
             mergeField(key);
         }
         for (key in child) {
@@ -1604,7 +1634,9 @@ log('vue 开始初始化...');
             }
         }
         function mergeField(key) {
+            log('enter mergeField(key)');
             var strat = strats[key] || defaultStrat;
+            log(strat);
             options[key] = strat(parent[key], child[key], vm, key);
         }
         return options
@@ -2087,7 +2119,7 @@ log('vue 开始初始化...');
             'require' // for Webpack/Browserify
         );
 
-        
+
         var warnNonPresent = function (target, key) {
             warn(
                 "Property or method \"" + key + "\" is not defined on the instance but " +
@@ -3081,9 +3113,9 @@ log('vue 开始初始化...');
         }
     }
 
-    
+
     installRenderHelpers(FunctionalRenderContext.prototype);
-   
+
 
     function createFunctionalComponent(
         Ctor,
@@ -3222,7 +3254,7 @@ log('vue 开始初始化...');
     };
 
     var hooksToMerge = Object.keys(componentVNodeHooks);
-   
+
 
     function createComponent(
         Ctor,
@@ -5021,6 +5053,7 @@ log('vue 开始初始化...');
             log(this);
             var vm = this;
             // a uid
+            log(uid$3);
             vm._uid = uid$3++;
 
             var startTag, endTag;
@@ -5029,6 +5062,7 @@ log('vue 开始初始化...');
 
             /* istanbul ignore if */
             if (config.performance && mark) {
+                log('if (config.performance && mark)');
                 startTag = "vue-perf-start:" + (vm._uid);
                 endTag = "vue-perf-end:" + (vm._uid);
                 mark(startTag);
@@ -5048,7 +5082,8 @@ log('vue 开始初始化...');
                 // internal component options needs special treatment.
                 initInternalComponent(vm, options);
             } else {
-                log('else');
+                log('else______');
+                log(vm.constructor);
                 vm.$options = mergeOptions(
                     resolveConstructorOptions(vm.constructor),
                     options || {},
@@ -5112,6 +5147,7 @@ log('vue 开始初始化...');
         log(options);
 
         if (Ctor.super) {
+            log('if (Ctor.super)');
             var superOptions = resolveConstructorOptions(Ctor.super);
             var cachedSuperOptions = Ctor.superOptions;
             if (superOptions !== cachedSuperOptions) {
@@ -5146,8 +5182,9 @@ log('vue 开始初始化...');
         return modified
     }
 
-    
+
     function Vue(options) {
+        log('enter Vue(options)');
         log(options);
         log(this);
         if (!(this instanceof Vue)) {
@@ -8140,7 +8177,7 @@ log('vue 开始初始化...');
         }, timeout + 1);
         el.addEventListener(event, onEnd);
     }
-   
+
     var transformRE = /\b(transform|all)(,|$)/;
 
     function getTransitionInfo(el, expectedType) {
