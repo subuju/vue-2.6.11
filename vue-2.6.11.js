@@ -165,7 +165,9 @@ log('vue 开始初始化...');
      * Check whether an object has the property.
      */
     var hasOwnProperty = Object.prototype.hasOwnProperty;
+
     function hasOwn(obj, key) {
+        log('enter hasOwn(obj, key)');
         return hasOwnProperty.call(obj, key)
     }
 
@@ -1061,6 +1063,8 @@ log('vue 开始初始化...');
         customSetter,
         shallow
     ) {
+        log('enter defineReactive$$1(obj, key, val, customSetter, shallow)');
+
         var dep = new Dep();
 
         var property = Object.getOwnPropertyDescriptor(obj, key);
@@ -1209,7 +1213,16 @@ log('vue 开始初始化...');
      */
     {
         strats.el = strats.propsData = function (parent, child, vm, key) {
+            log('enter strats.el(parent, child, vm, key)');
+
+            log(parent);
+            log(child);
+            log(vm);
+            log(key);
+
+
             if (!vm) {
+                log('if (!vm)');
                 warn(
                     "option \"" + key + "\" can only be used during instance " +
                     'creation with the `new` keyword.'
@@ -1257,6 +1270,7 @@ log('vue 开始初始化...');
         childVal,
         vm
     ) {
+        log('enter mergeDataOrFn(parentVal, childVal, vm)');
         if (!vm) {
             // in a Vue.extend merge, both should be functions
             if (!childVal) {
@@ -1277,6 +1291,7 @@ log('vue 开始初始化...');
                 )
             }
         } else {
+            log('else');
             return function mergedInstanceDataFn() {
                 // instance merge
                 var instanceData = typeof childVal === 'function'
@@ -1299,6 +1314,12 @@ log('vue 开始初始化...');
         childVal,
         vm
     ) {
+        log('enter strats.data(parentVal, childVal, vm)');
+
+        log(parentVal);
+        log(childVal);
+        log(vm);
+
         if (!vm) {
             if (childVal && typeof childVal !== 'function') {
                 warn(
@@ -1362,11 +1383,24 @@ log('vue 开始初始化...');
         vm,
         key
     ) {
+        log('enter mergeAssets(parentVal, childVal, vm, key)');
+
+        log(parentVal);
+        log(childVal);
+        log(vm);
+        log(key);
+
         var res = Object.create(parentVal || null);
+
+        log(res);
+
         if (childVal) {
+            log('enter if (childVal)');
             assertObjectType(key, childVal, vm);
             return extend(res, childVal)
         } else {
+            log('else');
+            log('exit mergeAssets(parentVal, childVal, vm, key)');
             return res
         }
     }
@@ -1438,6 +1472,11 @@ log('vue 开始初始化...');
      * Default strategy.
      */
     var defaultStrat = function (parentVal, childVal) {
+        log('enter defaultStrat(parentVal, childVal)');
+
+        log(parentVal);
+        log(childVal);
+
         return childVal === undefined
             ? parentVal
             : childVal
@@ -1560,6 +1599,7 @@ log('vue 开始初始化...');
 
         var dirs = options.directives;
         if (dirs) {
+            if('if (dirs)');
             for (var key in dirs) {
                 var def$$1 = dirs[key];
                 if (typeof def$$1 === 'function') {
@@ -1598,7 +1638,7 @@ log('vue 开始初始化...');
         if (typeof child === 'function') {
             log("if (typeof child === 'function')")
             child = child.options;
-        }0
+        }
 
         normalizeProps(child, vm);
         normalizeInject(child, vm);
@@ -1624,21 +1664,26 @@ log('vue 开始初始化...');
 
         var options = {};
         var key;
+        log('---------------------------------------------------------')
         for (key in parent) {
             log(key);
             mergeField(key);
         }
+        log('----------------------------------------------------------')
         for (key in child) {
+            log(key);
             if (!hasOwn(parent, key)) {
                 mergeField(key);
             }
         }
         function mergeField(key) {
             log('enter mergeField(key)');
-            var strat = strats[key] || defaultStrat;
-            log(strat);
+            var strat = strats[key] || defaultStrat;   
             options[key] = strat(parent[key], child[key], vm, key);
+            log('exit mergeField(key)');
         }
+
+        log('exit mergeOptions(parent, child, vm)');
         return options
     }
 
@@ -2184,16 +2229,28 @@ log('vue 开始初始化...');
         };
 
         initProxy = function initProxy(vm) {
+            log('enter initProxy(vm)')
+            log(vm);
+
             if (hasProxy) {
+                log('if (hasProxy)');
                 // determine which proxy handler to use
                 var options = vm.$options;
+
+                log(options);
+
                 var handlers = options.render && options.render._withStripped
                     ? getHandler
                     : hasHandler;
+
+                log(handlers);
+                
                 vm._renderProxy = new Proxy(vm, handlers);
             } else {
+                log('else');
                 vm._renderProxy = vm;
             }
+            log('exit initProxy(vm)')
         };
     }
 
@@ -2502,17 +2559,22 @@ log('vue 开始初始化...');
     /*  */
 
     function initProvide(vm) {
+        log('enter initProvide(vm)');
         var provide = vm.$options.provide;
         if (provide) {
+            log('if (provide)')
             vm._provided = typeof provide === 'function'
                 ? provide.call(vm)
                 : provide;
         }
+        log('exit initProvide(vm)');
     }
 
     function initInjections(vm) {
+        log('enter initInjections(vm)');
         var result = resolveInject(vm.$options.inject, vm);
         if (result) {
+            log('if (result)');
             toggleObserving(false);
             Object.keys(result).forEach(function (key) {
                 /* istanbul ignore else */
@@ -3566,6 +3628,7 @@ log('vue 开始初始化...');
     /*  */
 
     function initRender(vm) {
+        log('enter initRender(vm)');
         vm._vnode = null; // the root of the child tree
         vm._staticTrees = null; // v-once cached trees
         var options = vm.$options;
@@ -3845,11 +3908,15 @@ log('vue 开始初始化...');
     /*  */
 
     function initEvents(vm) {
+        log('enter initEvents(vm)');
+        log(vm);
+
         vm._events = Object.create(null);
         vm._hasHookEvent = false;
         // init parent attached events
         var listeners = vm.$options._parentListeners;
         if (listeners) {
+            log('if (listeners)');
             updateComponentListeners(vm, listeners);
         }
     }
@@ -3992,11 +4059,16 @@ log('vue 开始初始化...');
     }
 
     function initLifecycle(vm) {
+        log('enter initLifecycle(vm)');
+        log(vm);
+
         var options = vm.$options;
 
         // locate first non-abstract parent
         var parent = options.parent;
+
         if (parent && !options.abstract) {
+            log('if (parent && !options.abstract)');
             while (parent.$options.abstract && parent.$parent) {
                 parent = parent.$parent;
             }
@@ -4297,19 +4369,23 @@ log('vue 开始初始化...');
     }
 
     function callHook(vm, hook) {
+        log('enter callHook(vm, hook)');
         // #7573 disable dep collection when invoking lifecycle hooks
         pushTarget();
         var handlers = vm.$options[hook];
         var info = hook + " hook";
         if (handlers) {
+            log('if (handlers)');
             for (var i = 0, j = handlers.length; i < j; i++) {
                 invokeWithErrorHandling(handlers[i], vm, null, vm, info);
             }
         }
         if (vm._hasHookEvent) {
+            log('if (vm._hasHookEvent)');
             vm.$emit('hook:' + hook);
         }
         popTarget();
+        log('exit callHook(vm, hook)');
     }
 
     /*  */
@@ -4720,19 +4796,33 @@ log('vue 开始初始化...');
     }
 
     function initState(vm) {
+        log('enter initState(vm)');
         vm._watchers = [];
         var opts = vm.$options;
-        if (opts.props) { initProps(vm, opts.props); }
-        if (opts.methods) { initMethods(vm, opts.methods); }
+        if (opts.props) { 
+            log('if (opts.props)')
+            initProps(vm, opts.props); 
+        }
+        if (opts.methods) { 
+            log('if (opts.methods)')
+            initMethods(vm, opts.methods); 
+        }
         if (opts.data) {
+            log('if (opts.data)')
             initData(vm);
         } else {
+            log('else')
             observe(vm._data = {}, true /* asRootData */);
         }
-        if (opts.computed) { initComputed(vm, opts.computed); }
+        if (opts.computed) {
+            log('if (opts.computed)') 
+            initComputed(vm, opts.computed); 
+        }
         if (opts.watch && opts.watch !== nativeWatch) {
+            log('if (opts.watch && opts.watch !== nativeWatch)')
             initWatch(vm, opts.watch);
         }
+        log('exit initState(vm)');
     }
 
     function initProps(vm, propsOptions) {
@@ -5096,6 +5186,7 @@ log('vue 开始初始化...');
             }
             // expose real self
             vm._self = vm;
+            log('+++++++++++++++++++++++++')
             initLifecycle(vm);
             initEvents(vm);
             initRender(vm);
@@ -5107,12 +5198,14 @@ log('vue 开始初始化...');
 
             /* istanbul ignore if */
             if (config.performance && mark) {
+                log('if (config.performance && mark)');
                 vm._name = formatComponentName(vm, false);
                 mark(endTag);
                 measure(("vue " + (vm._name) + " init"), startTag, endTag);
             }
 
             if (vm.$options.el) {
+                log('if (vm.$options.el)');
                 vm.$mount(vm.$options.el);
             }
         };
@@ -5166,6 +5259,7 @@ log('vue 开始初始化...');
                 }
             }
         }
+        log('exit resolveConstructorOptions(Ctor)');
         return options
     }
 
@@ -5188,9 +5282,11 @@ log('vue 开始初始化...');
         log(options);
         log(this);
         if (!(this instanceof Vue)) {
+            log('if (!(this instanceof Vue))')
             warn('Vue is a constructor and should be called with the `new` keyword');
         }
         this._init(options);
+        log('exit Vue(options)');
     }
 
 

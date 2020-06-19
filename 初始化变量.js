@@ -434,3 +434,12 @@ var isBuiltInModifier = function (val) {
     return map[val];//map={stop:true, prevent:true, self:true, ctrl:true, shift:true, alt:true, meta:true, exact:true};
 }
 
+
+
+
+
+options = {
+    component: {
+        
+    }
+}
