@@ -10,14 +10,14 @@ log('vue 开始初始化...');
 
 
 (function (global, factory) {
-    log(global);
-    log(factory);
+    // log(global);
+    // log(factory);
 
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
         typeof define === 'function' && define.amd ? define(factory) :
             (global = global || self, global.Vue = factory());
 }(this, function () {
-    log('enter factory');
+    //log('enter factory');
     'use strict';
 
     /*  */
@@ -175,7 +175,7 @@ log('vue 开始初始化...');
      * Create a cached version of a pure function.
      */
     function cached(fn) {
-        log('enter cached(fn)');
+        //log('enter cached(fn)');
         var cache = Object.create(null);
         return (function cachedFn(str) {
             var hit = cache[str];
@@ -261,7 +261,7 @@ log('vue 开始初始化...');
      * Mix properties into target object.
      */
     function extend(to, _from) {
-        log('enter extend(to, _from)');
+        //log('enter extend(to, _from)');
         for (var key in _from) {
             to[key] = _from[key];
         }
@@ -511,6 +511,7 @@ log('vue 开始初始化...');
      * Check if a string starts with $ or _
      */
     function isReserved(str) {
+        log('enter isReserved(str)');
         var c = (str + '').charCodeAt(0);
         return c === 0x24 || c === 0x5F
     }
@@ -519,12 +520,18 @@ log('vue 开始初始化...');
      * Define a property.
      */
     function def(obj, key, val, enumerable) {
+        log('enter def(obj, key, val, enumerable)');
+        log(obj);
+        log(key);
+        log(val);
+
         Object.defineProperty(obj, key, {
             value: val,
             enumerable: !!enumerable,
             writable: true,
             configurable: true
         });
+        log('exit def(obj, key, val, enumerable)');
     }
 
     /**
@@ -621,7 +628,7 @@ log('vue 开始初始化...');
     /* istanbul ignore if */ // $flow-disable-line
     if (typeof Set !== 'undefined' && isNative(Set)) {
         // use native Set when available.
-        log("if (typeof Set !== 'undefined' && isNative(Set))");
+        //log("if (typeof Set !== 'undefined' && isNative(Set))");
         _Set = Set;
     } else {
         // a non-standard Set polyfill that only works with primitive keys.
@@ -661,6 +668,8 @@ log('vue 开始初始化...');
         };
 
         warn = function (msg, vm) {
+            log('enter warn')
+
             var trace = vm ? generateComponentTrace(vm) : '';
 
             if (config.warnHandler) {
@@ -792,13 +801,21 @@ log('vue 开始初始化...');
     var targetStack = [];
 
     function pushTarget(target) {
+        log('enter pushTarget(target)');
+        log(targetStack);
+        log(target);
         targetStack.push(target);
+        log(targetStack);
         Dep.target = target;
+        log('exit pushTarget(target)');
     }
 
     function popTarget() {
+        log('enter popTarget()');
         targetStack.pop();
         Dep.target = targetStack[targetStack.length - 1];
+        log(Dep.target);
+        log('exit popTarget()');
     }
 
     /*  */
@@ -899,8 +916,6 @@ log('vue 开始初始化...');
 
     var arrayMethods = Object.create(arrayProto);
 
-    log(arrayMethods);
-    log(arrayMethods.__proto__);
 
     var methodsToPatch = [
         'push',
@@ -915,11 +930,9 @@ log('vue 开始初始化...');
     /**
      * Intercept mutating methods and emit events
      */
-    log('%c#################', 'color:red;font-size:20px');
     methodsToPatch.forEach(function (method) {
         // cache original method
         var original = arrayProto[method];
-        log(original);
 
         def(arrayMethods, method, function mutator() {
             var args = [], len = arguments.length;
@@ -944,8 +957,6 @@ log('vue 开始初始化...');
         });
     });
 
-    /*  */
-
     var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
 
     /**
@@ -965,11 +976,18 @@ log('vue 开始初始化...');
      * collect dependencies and dispatch updates.
      */
     var Observer = function Observer(value) {
+        log('enter Observer(value)')
+        log(value);
+        log(this);
+
         this.value = value;
         this.dep = new Dep();
         this.vmCount = 0;
+
         def(value, '__ob__', this);
+
         if (Array.isArray(value)) {
+            log('if (Array.isArray(value))')
             if (hasProto) {
                 protoAugment(value, arrayMethods);
             } else {
@@ -977,8 +995,10 @@ log('vue 开始初始化...');
             }
             this.observeArray(value);
         } else {
+            log('else')
             this.walk(value);
         }
+        log('exit Observer(value)')
     };
 
     /**
@@ -1032,11 +1052,16 @@ log('vue 开始初始化...');
      * or the existing observer if the value already has one.
      */
     function observe(value, asRootData) {
+        log('enter observe(value, asRootData)');
+        log(value);
+
         if (!isObject(value) || value instanceof VNode) {
+            log('if (!isObject(value) || value instanceof VNode)')
             return
         }
         var ob;
         if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
+            log('if (hasOwn(value, "__ob__") && value.__ob__ instanceof Observer)')
             ob = value.__ob__;
         } else if (
             shouldObserve &&
@@ -1045,11 +1070,14 @@ log('vue 开始初始化...');
             Object.isExtensible(value) &&
             !value._isVue
         ) {
+            log('else if');
             ob = new Observer(value);
         }
+        log(ob);
         if (asRootData && ob) {
             ob.vmCount++;
         }
+        log('exit observe(value, asRootData)');
         return ob
     }
 
@@ -1065,9 +1093,17 @@ log('vue 开始初始化...');
     ) {
         log('enter defineReactive$$1(obj, key, val, customSetter, shallow)');
 
+        log(obj);
+        log(key);
+        log(val);
+        log(customSetter);
+        log(shallow);
+
+
         var dep = new Dep();
 
         var property = Object.getOwnPropertyDescriptor(obj, key);
+
         if (property && property.configurable === false) {
             return
         }
@@ -1075,11 +1111,15 @@ log('vue 开始初始化...');
         // cater for pre-defined getter/setters
         var getter = property && property.get;
         var setter = property && property.set;
+
         if ((!getter || setter) && arguments.length === 2) {
+            log('if ((!getter || setter) && arguments.length === 2)')
             val = obj[key];
         }
 
         var childOb = !shallow && observe(val);
+
+
         Object.defineProperty(obj, key, {
             enumerable: true,
             configurable: true,
@@ -1117,6 +1157,7 @@ log('vue 开始初始化...');
                 dep.notify();
             }
         });
+        log('exit defineReactive$$1(obj, key, val, customSetter, shallow)');
     }
 
     /**
@@ -1199,8 +1240,6 @@ log('vue 开始初始化...');
         }
     }
 
-    /*  */
-
     /**
      * Option overwriting strategies are functions that handle
      * how to merge a parent option value and a child option
@@ -1236,7 +1275,11 @@ log('vue 开始初始化...');
      * Helper that recursively merges two data objects together.
      */
     function mergeData(to, from) {
-        if (!from) { return to }
+        log('enter mergeData(to, from)');
+        if (!from) {
+            log('if (!from)')
+            return to
+        }
         var key, toVal, fromVal;
 
         var keys = hasSymbol
@@ -1259,6 +1302,7 @@ log('vue 开始初始化...');
                 mergeData(toVal, fromVal);
             }
         }
+        log('exit mergeData(to, from)');
         return to
     }
 
@@ -1293,18 +1337,26 @@ log('vue 开始初始化...');
         } else {
             log('else');
             return function mergedInstanceDataFn() {
+                log('enter mergedInstanceDataFn()');
                 // instance merge
                 var instanceData = typeof childVal === 'function'
                     ? childVal.call(vm, vm)
                     : childVal;
+
+                log(instanceData);
+
                 var defaultData = typeof parentVal === 'function'
                     ? parentVal.call(vm, vm)
                     : parentVal;
+
+                log(defaultData);
+
                 if (instanceData) {
                     return mergeData(instanceData, defaultData)
                 } else {
                     return defaultData
                 }
+                log('exit mergedInstanceDataFn()');
             }
         }
     }
@@ -1519,7 +1571,7 @@ log('vue 开始初始化...');
         log(vm);
 
         var props = options.props;
-        if (!props) { 
+        if (!props) {
             log('if (!props)');
             return
         }
@@ -1564,7 +1616,7 @@ log('vue 开始初始化...');
         log(vm);
 
         var inject = options.inject;
-        if (!inject) { 
+        if (!inject) {
             log('if (!inject)');
             return
         }
@@ -1599,7 +1651,7 @@ log('vue 开始初始化...');
 
         var dirs = options.directives;
         if (dirs) {
-            if('if (dirs)');
+            if ('if (dirs)');
             for (var key in dirs) {
                 var def$$1 = dirs[key];
                 if (typeof def$$1 === 'function') {
@@ -1678,7 +1730,8 @@ log('vue 开始初始化...');
         }
         function mergeField(key) {
             log('enter mergeField(key)');
-            var strat = strats[key] || defaultStrat;   
+            log(strats[key]);
+            var strat = strats[key] || defaultStrat;
             options[key] = strat(parent[key], child[key], vm, key);
             log('exit mergeField(key)');
         }
@@ -2057,7 +2110,7 @@ log('vue 开始初始化...');
     // Promise is available, we will use it:
     /* istanbul ignore next, $flow-disable-line */
     if (typeof Promise !== 'undefined' && isNative(Promise)) {
-        log('================if (typeof Promise !== "undefined" && isNative(Promise))');
+        //log('================if (typeof Promise !== "undefined" && isNative(Promise))');
         var p = Promise.resolve();
         timerFunc = function () {
             p.then(flushCallbacks);
@@ -2134,6 +2187,8 @@ log('vue 开始初始化...');
 
     {
         var perf = inBrowser && window.performance;
+
+        //log(perf);
         /* istanbul ignore if */
         if (
             perf &&
@@ -2190,7 +2245,7 @@ log('vue 开始初始化...');
             typeof Proxy !== 'undefined' && isNative(Proxy);
 
         if (hasProxy) {
-            log('enter if (hasProxy)');
+            //log('enter if (hasProxy)');
             var isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta,exact');
             config.keyCodes = new Proxy(config.keyCodes, {
                 set: function set(target, key, value) {
@@ -2244,7 +2299,7 @@ log('vue 开始初始化...');
                     : hasHandler;
 
                 log(handlers);
-                
+
                 vm._renderProxy = new Proxy(vm, handlers);
             } else {
                 log('else');
@@ -2591,10 +2646,13 @@ log('vue 开始初始化...');
             });
             toggleObserving(true);
         }
+        log('exit initInjections(vm)');
     }
 
     function resolveInject(inject, vm) {
+        log('enter resolveInject(inject, vm)');
         if (inject) {
+            log('if (inject)');
             // inject is :any because flow is not smart enough to figure out cached
             var result = Object.create(null);
             var keys = hasSymbol
@@ -2627,6 +2685,7 @@ log('vue 开始初始化...');
             }
             return result
         }
+        log('exit resolveInject(inject, vm)');
     }
 
     /*  */
@@ -2640,7 +2699,12 @@ log('vue 开始初始化...');
         children,
         context
     ) {
+        log('enter resolveSlots(children, context)');
+        log(children);
+        log(context);
+
         if (!children || !children.length) {
+            log('exit resolveSlots(children, context)');
             return {}
         }
         var slots = {};
@@ -2673,6 +2737,7 @@ log('vue 开始初始化...');
                 delete slots[name$1];
             }
         }
+        log('exit resolveSlots(children, context)');
         return slots
     }
 
@@ -3078,8 +3143,8 @@ log('vue 开始初始化...');
     /*  */
 
     function installRenderHelpers(target) {
-        log('enter installRenderHelpers');
-        log(FunctionalRenderContext.prototype);
+        //log('enter installRenderHelpers');
+        //log(FunctionalRenderContext.prototype);
         target._o = markOnce;
         target._n = toNumber;
         target._s = toString;
@@ -3174,7 +3239,6 @@ log('vue 开始初始化...');
             this._c = function (a, b, c, d) { return createElement(contextVm, a, b, c, d, needNormalization); };
         }
     }
-
 
     installRenderHelpers(FunctionalRenderContext.prototype);
 
@@ -3316,7 +3380,6 @@ log('vue 开始初始化...');
     };
 
     var hooksToMerge = Object.keys(componentVNodeHooks);
-
 
     function createComponent(
         Ctor,
@@ -3633,7 +3696,9 @@ log('vue 开始初始化...');
         vm._staticTrees = null; // v-once cached trees
         var options = vm.$options;
         var parentVnode = vm.$vnode = options._parentVnode; // the placeholder node in parent tree
+
         var renderContext = parentVnode && parentVnode.context;
+
         vm.$slots = resolveSlots(options._renderChildren, renderContext);
         vm.$scopedSlots = emptyObject;
         // bind the createElement fn to this instance
@@ -3658,12 +3723,13 @@ log('vue 开始初始化...');
                 !isUpdatingChildComponent && warn("$listeners is readonly.", vm);
             }, true);
         }
+        log('exit initRender(vm)');
     }
 
     var currentRenderingInstance = null;
 
     function renderMixin(Vue) {
-        log('enter renderMixin(Vue)');
+        //log('enter renderMixin(Vue)');
         // install runtime convenience helpers
         installRenderHelpers(Vue.prototype);
 
@@ -3919,6 +3985,7 @@ log('vue 开始初始化...');
             log('if (listeners)');
             updateComponentListeners(vm, listeners);
         }
+        log('exit initEvents(vm)');
     }
 
     var target;
@@ -3952,7 +4019,7 @@ log('vue 开始初始化...');
     }
 
     function eventsMixin(Vue) {
-        log('enter eventsMixin(Vue)');
+        //log('enter eventsMixin(Vue)');
         var hookRE = /^hook:/;
         Vue.prototype.$on = function (event, fn) {
             var vm = this;
@@ -4087,10 +4154,11 @@ log('vue 开始初始化...');
         vm._isMounted = false;
         vm._isDestroyed = false;
         vm._isBeingDestroyed = false;
+        log('exit initLifecycle(vm)');
     }
 
     function lifecycleMixin(Vue) {
-        log('enter lifecycleMixin(Vue)');
+        //log('enter lifecycleMixin(Vue)');
         Vue.prototype._update = function (vnode, hydrating) {
             var vm = this;
             var prevEl = vm.$el;
@@ -4373,6 +4441,7 @@ log('vue 开始初始化...');
         // #7573 disable dep collection when invoking lifecycle hooks
         pushTarget();
         var handlers = vm.$options[hook];
+
         var info = hook + " hook";
         if (handlers) {
             log('if (handlers)');
@@ -4429,7 +4498,7 @@ log('vue 开始初始化...');
     // All IE versions use low-res event timestamps, and have problematic clock
     // implementations (#9632)
     if (inBrowser && !isIE) {
-        log('if (inBrowser && !isIE)');
+        //log('if (inBrowser && !isIE)');
         var performance = window.performance;
         if (
             performance &&
@@ -4440,6 +4509,7 @@ log('vue 开始初始化...');
             // smaller than it, it means the event is using a hi-res timestamp,
             // and we need to use the hi-res version for event listener timestamps as
             // well.
+            //log(')))))))))))))');
             getNow = function () { return performance.now(); };
         }
     }
@@ -4786,6 +4856,7 @@ log('vue 开始初始化...');
     };
 
     function proxy(target, sourceKey, key) {
+        log('enter proxy(target, sourceKey, key)');
         sharedPropertyDefinition.get = function proxyGetter() {
             return this[sourceKey][key]
         };
@@ -4793,19 +4864,20 @@ log('vue 开始初始化...');
             this[sourceKey][key] = val;
         };
         Object.defineProperty(target, key, sharedPropertyDefinition);
+        log('exit proxy(target, sourceKey, key)');
     }
 
     function initState(vm) {
         log('enter initState(vm)');
         vm._watchers = [];
         var opts = vm.$options;
-        if (opts.props) { 
+        if (opts.props) {
             log('if (opts.props)')
-            initProps(vm, opts.props); 
+            initProps(vm, opts.props);
         }
-        if (opts.methods) { 
+        if (opts.methods) {
             log('if (opts.methods)')
-            initMethods(vm, opts.methods); 
+            initMethods(vm, opts.methods);
         }
         if (opts.data) {
             log('if (opts.data)')
@@ -4815,8 +4887,8 @@ log('vue 开始初始化...');
             observe(vm._data = {}, true /* asRootData */);
         }
         if (opts.computed) {
-            log('if (opts.computed)') 
-            initComputed(vm, opts.computed); 
+            log('if (opts.computed)')
+            initComputed(vm, opts.computed);
         }
         if (opts.watch && opts.watch !== nativeWatch) {
             log('if (opts.watch && opts.watch !== nativeWatch)')
@@ -4874,11 +4946,14 @@ log('vue 开始初始化...');
     }
 
     function initData(vm) {
+        log('enter initData(vm)');
         var data = vm.$options.data;
         data = vm._data = typeof data === 'function'
             ? getData(data, vm)
             : data || {};
+
         if (!isPlainObject(data)) {
+            log('if (!isPlainObject(data))');
             data = {};
             warn(
                 'data functions should return an object:\n' +
@@ -4891,10 +4966,16 @@ log('vue 开始初始化...');
         var props = vm.$options.props;
         var methods = vm.$options.methods;
         var i = keys.length;
+
+
         while (i--) {
+            log('while(i--)');
+
             var key = keys[i];
+
             {
                 if (methods && hasOwn(methods, key)) {
+                    log('if (methods && hasOwn(methods, key))')
                     warn(
                         ("Method \"" + key + "\" has already been defined as a data property."),
                         vm
@@ -4902,12 +4983,14 @@ log('vue 开始初始化...');
                 }
             }
             if (props && hasOwn(props, key)) {
+                log('if (props && hasOwn(props, key))')
                 warn(
                     "The data property \"" + key + "\" is already declared as a prop. " +
                     "Use prop default value instead.",
                     vm
                 );
             } else if (!isReserved(key)) {
+                log('else if (!isReserved(key))')
                 proxy(vm, "_data", key);
             }
         }
@@ -4916,6 +4999,7 @@ log('vue 开始初始化...');
     }
 
     function getData(data, vm) {
+        log('enter getData(data, vm)');
         // #7573 disable dep collection when invoking data getters
         pushTarget();
         try {
@@ -4926,6 +5010,7 @@ log('vue 开始初始化...');
         } finally {
             popTarget();
         }
+        log('exit getData(data, vm)');
     }
 
     var computedWatcherOptions = { lazy: true };
@@ -5080,7 +5165,7 @@ log('vue 开始初始化...');
     }
 
     function stateMixin(Vue) {
-        log('enter stateMixin(Vue)');
+        //log('enter stateMixin(Vue)');
         // flow somehow has problems with directly declared definition object
         // when using Object.defineProperty, so we have to procedurally build up
         // the object here.
@@ -5129,7 +5214,7 @@ log('vue 开始初始化...');
                 watcher.teardown();
             }
         };
-        log('exit stateMixin(Vue)');
+        //log('exit stateMixin(Vue)');
     }
 
     /*  */
@@ -5137,18 +5222,17 @@ log('vue 开始初始化...');
     var uid$3 = 0;
 
     function initMixin(Vue) {
-        log('enter initMixin(Vue)');
+        //log('enter initMixin(Vue)');
         Vue.prototype._init = function (options) {
             log('enter _init(options)');
-            log(this);
+
+            log(options);
+
             var vm = this;
             // a uid
-            log(uid$3);
             vm._uid = uid$3++;
 
             var startTag, endTag;
-
-            log(config.performance);
 
             /* istanbul ignore if */
             if (config.performance && mark) {
@@ -5160,9 +5244,6 @@ log('vue 开始初始化...');
 
             // a flag to avoid this being observed
             vm._isVue = true;
-
-            log(options);
-            log(options._isComponent);
 
             // merge options
             if (options && options._isComponent) {
@@ -5186,7 +5267,8 @@ log('vue 开始初始化...');
             }
             // expose real self
             vm._self = vm;
-            log('+++++++++++++++++++++++++')
+
+            log("+++++++++++++++++++++++++");
             initLifecycle(vm);
             initEvents(vm);
             initRender(vm);
@@ -5195,6 +5277,7 @@ log('vue 开始初始化...');
             initState(vm);
             initProvide(vm); // resolve provide after data/props
             callHook(vm, 'created');
+            log("+++++++++++++++++++++++++");
 
             /* istanbul ignore if */
             if (config.performance && mark) {
@@ -5208,8 +5291,9 @@ log('vue 开始初始化...');
                 log('if (vm.$options.el)');
                 vm.$mount(vm.$options.el);
             }
+            log('exit _init(options)');
         };
-        log('exit initMixin(Vue)');
+
     }
 
     function initInternalComponent(vm, options) {
@@ -5236,8 +5320,6 @@ log('vue 开始初始化...');
         log(Ctor);
 
         var options = Ctor.options;
-
-        log(options);
 
         if (Ctor.super) {
             log('if (Ctor.super)');
@@ -5290,25 +5372,25 @@ log('vue 开始初始化...');
     }
 
 
-    log('%cbefore initMixin', 'color:red');
+    //log('%cbefore initMixin', 'color:red');
     initMixin(Vue);
-    log('%cafter initMixin', 'color:red');
+    //log('%cafter initMixin', 'color:red');
 
-    log('%cbefore stateMixin', 'color:green');
+    //log('%cbefore stateMixin', 'color:green');
     stateMixin(Vue);
-    log('%cafter stateMixin', 'color:green');
+    //log('%cafter stateMixin', 'color:green');
 
-    log('%cbefore eventsMixin', 'color:blue');
+    //log('%cbefore eventsMixin', 'color:blue');
     eventsMixin(Vue);
-    log('%cafter eventsMixin', 'color:blue');
+    //log('%cafter eventsMixin', 'color:blue');
 
-    log('%cbefore lifecycleMixin', 'color:orange');
+    //log('%cbefore lifecycleMixin', 'color:orange');
     lifecycleMixin(Vue);
-    log('%cafter lifecycleMixin', 'color:orange');
+    //log('%cafter lifecycleMixin', 'color:orange');
 
-    log('%cbefore renderMixin', 'color:pink');
+    //log('%cbefore renderMixin', 'color:pink');
     renderMixin(Vue);
-    log('%cafter renderMixin', 'color:pink');
+    //log('%cafter renderMixin', 'color:pink');
 
     /*  */
 
@@ -5602,7 +5684,7 @@ log('vue 开始初始化...');
     /*  */
 
     function initGlobalAPI(Vue) {
-        log('enter initGlobalAPI(Vue)');
+        //log('enter initGlobalAPI(Vue)');
         // config
         var configDef = {};
         configDef.get = function () { return config; };
@@ -5644,10 +5726,10 @@ log('vue 开始初始化...');
         // components with in Weex's multi-instance scenarios.
         Vue.options._base = Vue;
 
-        log('%c_------------------------', 'color:#66CCFF');
+        //log('%c_------------------------', 'color:#66CCFF');
         extend(Vue.options.components, builtInComponents);
-        log(Vue.options.components);
-        log('%c_------------------------', 'color:#66CCFF');
+        //log(Vue.options.components);
+        //log('%c_------------------------', 'color:#66CCFF');
 
 
 
@@ -5657,9 +5739,9 @@ log('vue 开始初始化...');
         initAssetRegisters(Vue);
     }
 
-    log('%cbefore initGlobalAPI(Vue)', 'color:red');
+    //log('%cbefore initGlobalAPI(Vue)', 'color:red');
     initGlobalAPI(Vue);
-    log('%cafter initGlobalAPI(Vue)', 'color:red');
+    //log('%cafter initGlobalAPI(Vue)', 'color:red');
 
     Object.defineProperty(Vue.prototype, '$isServer', {
         get: isServerRendering

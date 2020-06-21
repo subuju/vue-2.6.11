@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Vue</title>
-        <script src="vue-2.6.11.js"></script>
-    </head>
 
-    <body>
-        <div id="app">
-            <p>{{message}}</p>
-        </div>
+<head>
+    <meta charset="utf-8">
+    <title>Vue</title>
+    <script src="vue-2.6.11.js"></script>
+</head>
 
-        <script>
-            console.log('%c-----------begin--------------', 'color:red;font-size:20px');
-            new Vue({
-                el:'#app',
-                data:{
-                    message:'Hello Vue.js!'
-                }
-            });
-            console.log('%c-----------end--------------', 'color:red;font-size:20px');
-        </script>
-    </body>
+<body>
+    <div id="app">
+        <p>{{message}}</p>
+    </div>
+
+    <script>
+        console.log('%c-----------begin--------------', 'color:red;font-size:20px');
+
+        new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue.js!'
+            }
+        });
+        console.log('%c-----------end--------------', 'color:red;font-size:20px');
+    </script>
+</body>
+
 </html>

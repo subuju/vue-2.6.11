@@ -1,4 +1,4 @@
-
+const vue2611 = require("./vue-2.6.11");
 
 Vue.config
 
@@ -26,7 +26,3 @@ Vue.observable = function (obj) {
 };
 
 
-
-
-
-Vue { _uid: 0, _isVue: true }

@@ -435,11 +435,39 @@ var isBuiltInModifier = function (val) {
 }
 
 
+mark = function (tag) { return perf.mark(tag); };
+measure = function (name, startTag, endTag) {
+    perf.measure(name, startTag, endTag);
+    perf.clearMarks(startTag);
+    perf.clearMarks(endTag);
+    // perf.clearMeasures(name)
+};
 
 
 
-options = {
-    component: {
-        
+
+/*
+fn = function (name) {
+    var passive = name.charAt(0) === '&';
+    name = passive ? name.slice(1) : name;
+    var once$$1 = name.charAt(0) === '~'; // Prefixed last, checked first
+    name = once$$1 ? name.slice(1) : name;
+    var capture = name.charAt(0) === '!';
+    name = capture ? name.slice(1) : name;
+    return {
+        name: name,
+        once: once$$1,
+        capture: capture,
+        passive: passive
     }
 }
+*/
+//var cache = Object.create(null);
+var normalizeEvent = function cachedFn(str) {
+    var hit = cache[str];
+    return hit || (cache[str] = fn(str))
+}
+
+
+getNow = function () { return performance.now(); };
+
