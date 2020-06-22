@@ -1444,8 +1444,6 @@ log('vue 开始初始化...');
 
         var res = Object.create(parentVal || null);
 
-        log(res);
-
         if (childVal) {
             log('enter if (childVal)');
             assertObjectType(key, childVal, vm);
@@ -1699,7 +1697,7 @@ log('vue 开始初始化...');
         // Apply extends and mixins on the child options,
         // but only if it is a raw options object that isn't
         // the result of another mergeOptions call.
-        // Only merged options has the _base property.
+        // Only merged options has the _base property.      
         if (!child._base) {
             log('if (!child._base)');
             if (child.extends) {
@@ -1725,6 +1723,7 @@ log('vue 开始初始化...');
         for (key in child) {
             log(key);
             if (!hasOwn(parent, key)) {
+                log('if (!hasOwn(parent, key))')
                 mergeField(key);
             }
         }
@@ -5320,6 +5319,8 @@ log('vue 开始初始化...');
         log(Ctor);
 
         var options = Ctor.options;
+
+        log(options);
 
         if (Ctor.super) {
             log('if (Ctor.super)');
