@@ -78,6 +78,7 @@ log('vue 开始初始化...');
      * for plain JavaScript objects.
      */
     function isPlainObject(obj) {
+        log('enter isPlainObject(obj)')
         return _toString.call(obj) === '[object Object]'
     }
 
@@ -261,10 +262,11 @@ log('vue 开始初始化...');
      * Mix properties into target object.
      */
     function extend(to, _from) {
-        //log('enter extend(to, _from)');
+        log('enter extend(to, _from)');
         for (var key in _from) {
             to[key] = _from[key];
         }
+        log('exit extend(to, _from)')
         return to
     }
 
@@ -1007,6 +1009,9 @@ log('vue 开始初始化...');
      * value type is Object.
      */
     Observer.prototype.walk = function walk(obj) {
+        log('enter walk(ob)');
+        log(obj);
+
         var keys = Object.keys(obj);
         for (var i = 0; i < keys.length; i++) {
             defineReactive$$1(obj, keys[i]);
@@ -1075,6 +1080,7 @@ log('vue 开始初始化...');
         }
         log(ob);
         if (asRootData && ob) {
+            log('if (asRootData && ob)')
             ob.vmCount++;
         }
         log('exit observe(value, asRootData)');
@@ -1104,7 +1110,10 @@ log('vue 开始初始化...');
 
         var property = Object.getOwnPropertyDescriptor(obj, key);
 
+        log(property);
+
         if (property && property.configurable === false) {
+            log('if (property && property.configurable === false)')
             return
         }
 
@@ -1719,7 +1728,8 @@ log('vue 开始初始化...');
             log(key);
             mergeField(key);
         }
-        log('----------------------------------------------------------')
+
+
         for (key in child) {
             log(key);
             if (!hasOwn(parent, key)) {
@@ -1735,6 +1745,8 @@ log('vue 开始初始化...');
             log('exit mergeField(key)');
         }
 
+        log('----------------------------------------------------------')
+        log(options);
         log('exit mergeOptions(parent, child, vm)');
         return options
     }
@@ -2708,6 +2720,7 @@ log('vue 开始初始化...');
         }
         var slots = {};
         for (var i = 0, l = children.length; i < l; i++) {
+            log('for (var i = 0, l = children.length; i < l; i++)')
             var child = children[i];
             var data = child.data;
             // remove slot attribute if the node is resolved as a Vue slot node
@@ -2732,6 +2745,7 @@ log('vue 开始初始化...');
         }
         // ignore slots that contains only whitespace
         for (var name$1 in slots) {
+            log('for (var name$1 in slots)')
             if (slots[name$1].every(isWhitespace)) {
                 delete slots[name$1];
             }
@@ -4441,6 +4455,8 @@ log('vue 开始初始化...');
         pushTarget();
         var handlers = vm.$options[hook];
 
+        log(handlers);
+
         var info = hook + " hook";
         if (handlers) {
             log('if (handlers)');
@@ -4946,6 +4962,7 @@ log('vue 开始初始化...');
 
     function initData(vm) {
         log('enter initData(vm)');
+        log('################################')
         var data = vm.$options.data;
         data = vm._data = typeof data === 'function'
             ? getData(data, vm)
@@ -4961,7 +4978,9 @@ log('vue 开始初始化...');
             );
         }
         // proxy data on instance
-        var keys = Object.keys(data);
+        var keys = Object.keys(data)
+        log(keys);
+
         var props = vm.$options.props;
         var methods = vm.$options.methods;
         var i = keys.length;
@@ -4981,6 +5000,7 @@ log('vue 开始初始化...');
                     );
                 }
             }
+
             if (props && hasOwn(props, key)) {
                 log('if (props && hasOwn(props, key))')
                 warn(
@@ -5008,8 +5028,8 @@ log('vue 开始初始化...');
             return {}
         } finally {
             popTarget();
+            log('exit getData(data, vm)');
         }
-        log('exit getData(data, vm)');
     }
 
     var computedWatcherOptions = { lazy: true };
@@ -5221,7 +5241,6 @@ log('vue 开始初始化...');
     var uid$3 = 0;
 
     function initMixin(Vue) {
-        //log('enter initMixin(Vue)');
         Vue.prototype._init = function (options) {
             log('enter _init(options)');
 
@@ -5253,7 +5272,7 @@ log('vue 开始初始化...');
                 initInternalComponent(vm, options);
             } else {
                 log('else______');
-                log(vm.constructor);
+
                 vm.$options = mergeOptions(
                     resolveConstructorOptions(vm.constructor),
                     options || {},
@@ -5977,9 +5996,12 @@ log('vue 开始初始化...');
      * Query an element selector if it's not an element already.
      */
     function query(el) {
+        log('enter query(el)');
         if (typeof el === 'string') {
+            log('if (typeof el === "string")')
             var selected = document.querySelector(el);
             if (!selected) {
+                log('if (!selected)')
                 warn(
                     'Cannot find element: ' + el
                 );
@@ -5987,6 +6009,7 @@ log('vue 开始初始化...');
             }
             return selected
         } else {
+            log('else')
             return el
         }
     }
@@ -11973,6 +11996,7 @@ log('vue 开始初始化...');
     }
 
     function createCompileToFunctionFn(compile) {
+        log('enter createCompileToFunctionFn(compile)')
         var cache = Object.create(null);
 
         return function compileToFunctions(
@@ -11980,7 +12004,15 @@ log('vue 开始初始化...');
             options,
             vm
         ) {
+            log('enter compileToFunctions(template, options, vm)');
+
+            log(template);
+            log(options);
+            log(vm);
+
+
             options = extend({}, options);
+
             var warn$$1 = options.warn || warn;
             delete options.warn;
 
@@ -12003,10 +12035,12 @@ log('vue 开始初始化...');
             }
 
             // check cache
+            log(options.delimiters)
             var key = options.delimiters
                 ? String(options.delimiters) + template
                 : template;
             if (cache[key]) {
+                log('if (cache[key])')
                 return cache[key]
             }
 
@@ -12075,11 +12109,14 @@ log('vue 开始初始化...');
     /*  */
 
     function createCompilerCreator(baseCompile) {
+        log('enter createCompilerCreator(baseCompile)')
         return function createCompiler(baseOptions) {
+            log('enter createCompiler(baseOptions)');
             function compile(
                 template,
                 options
             ) {
+                log('enter compile(template, options)');
                 var finalOptions = Object.create(baseOptions);
                 var errors = [];
                 var tips = [];
@@ -12089,7 +12126,9 @@ log('vue 开始初始化...');
                 };
 
                 if (options) {
+                    log('if (options)')
                     if (options.outputSourceRange) {
+                        log('if (options.outputSourceRange)')
                         // $flow-disable-line
                         var leadingSpaceLength = template.match(/^\s*/)[0].length;
 
@@ -12108,11 +12147,13 @@ log('vue 开始初始化...');
                     }
                     // merge custom modules
                     if (options.modules) {
+                        log('if (options.modules)')
                         finalOptions.modules =
                             (baseOptions.modules || []).concat(options.modules);
                     }
                     // merge custom directives
                     if (options.directives) {
+                        log('if (options.directives)')
                         finalOptions.directives = extend(
                             Object.create(baseOptions.directives || null),
                             options.directives
@@ -12120,6 +12161,7 @@ log('vue 开始初始化...');
                     }
                     // copy other options
                     for (var key in options) {
+                        log('for (var key in options)')
                         if (key !== 'modules' && key !== 'directives') {
                             finalOptions[key] = options[key];
                         }
@@ -12149,6 +12191,7 @@ log('vue 开始初始化...');
     // `createCompilerCreator` allows creating compilers that use alternative
     // parser/optimizer/codegen, e.g the SSR optimizing compiler.
     // Here we just export a default compiler using the default parts.
+
     var createCompiler = createCompilerCreator(function baseCompile(
         template,
         options
@@ -12165,10 +12208,16 @@ log('vue 开始初始化...');
         }
     });
 
+
     /*  */
 
+    log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     var ref$1 = createCompiler(baseOptions);
+    log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    
+
     var compile = ref$1.compile;
+
     var compileToFunctions = ref$1.compileToFunctions;
 
     /*  */
@@ -12198,21 +12247,32 @@ log('vue 开始初始化...');
         el,
         hydrating
     ) {
+        log('enter Vue.prototype.$mount')
+
+        log(el);
+        log(hydrating);
+
+
         el = el && query(el);
 
         /* istanbul ignore if */
         if (el === document.body || el === document.documentElement) {
+            log('if (el === document.body || el === document.documentElement)')
             warn(
                 "Do not mount Vue to <html> or <body> - mount to normal elements instead."
             );
             return this
         }
 
+        log(this);
+
         var options = this.$options;
         // resolve template/el and convert to render function
         if (!options.render) {
+            log('if (!options.render)')
             var template = options.template;
             if (template) {
+                log('if (template)')
                 if (typeof template === 'string') {
                     if (template.charAt(0) === '#') {
                         template = idToTemplate(template);
@@ -12233,14 +12293,18 @@ log('vue 开始初始化...');
                     return this
                 }
             } else if (el) {
+                log('else if (el)')
                 template = getOuterHTML(el);
             }
             if (template) {
+                log('HHHHHHHHHHHHHHHHH')
                 /* istanbul ignore if */
                 if (config.performance && mark) {
+                    log('if (config.performance && mark)')
                     mark('compile');
                 }
 
+                log("%c 我是前方", 'color:red;');
                 var ref = compileToFunctions(template, {
                     outputSourceRange: "development" !== 'production',
                     shouldDecodeNewlines: shouldDecodeNewlines,
@@ -12248,6 +12312,9 @@ log('vue 开始初始化...');
                     delimiters: options.delimiters,
                     comments: options.comments
                 }, this);
+                log("%c 我是后方", 'color:red;');
+
+
                 var render = ref.render;
                 var staticRenderFns = ref.staticRenderFns;
                 options.render = render;
@@ -12268,9 +12335,12 @@ log('vue 开始初始化...');
      * of SVG elements in IE as well.
      */
     function getOuterHTML(el) {
+        log('enter getOuterHTML(el)')
         if (el.outerHTML) {
+            log('if (el.outerHTML)')
             return el.outerHTML
         } else {
+            log('else');
             var container = document.createElement('div');
             container.appendChild(el.cloneNode(true));
             return container.innerHTML
